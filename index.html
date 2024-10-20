@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Finance Management App</title>
+
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Advanced CSS and 3D Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Custom CSS for cutting-edge visuals -->
+    <style>
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            overflow-x: hidden;
+            color: white;
+        }
+
+        /* Home Page */
+        #home {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background: linear-gradient(135deg, rgba(255, 82, 102, 0.6), rgba(25, 25, 255, 0.6));
+        }
+
+        .video-background {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -1;
+        }
+
+        .home-header {
+            font-size: 3.5em;
+            font-family: cursive;
+            font-weight: bold;
+            margin-bottom: 20px;
+            animation: fadeInDown 1.5s ease-out;
+        }
+
+        .home-description {
+            font-size: 1.4em;
+            margin-bottom: 50px;
+            max-width: 800px;
+            font-style: italic;
+            line-height: 1.8em;
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        .btn-glow {
+            padding: 15px 30px;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+            color: white;
+            cursor: pointer;
+            background: linear-gradient(45deg, #ff0047, #f4c4f3, #007cf0, #00dfd8);
+            background-size: 400%;
+            border-radius: 30px;
+            animation: glowing 5s linear infinite;
+            box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-glow:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes glowing {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Login Page */
+        #login {
+            display: none;
+            position: relative;
+            height: 100vh;
+            background: linear-gradient(145deg, #f953c6, #b91d73);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-box {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.3);
+            width: 350px;
+            text-align: center;
+            animation: fadeIn 1.5s ease;
+        }
+
+        .login-box h2 {
+            font-size: 2.5em;
+            color: #ffcccb;
+            margin-bottom: 30px;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 30px;
+            outline: none;
+            background: linear-gradient(45deg, #ff0047, #f4c4f3, #007cf0, #00dfd8);
+            color: white;
+            font-size: 1.1em;
+            animation: glowing 5s linear infinite;
+        }
+
+        .login-btn {
+            background-color: #ff0047;
+            padding: 15px 30px;
+            border-radius: 30px;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-btn:hover {
+            transform: scale(1.05);
+            transition: 0.3s ease;
+        }
+
+        /* Dashboard Page */
+        #dashboard {
+            display: none;
+            padding: 50px;
+            text-align: center;
+            background: radial-gradient(circle, #1d2b64, #f8cdda);
+        }
+
+        .dashboard-header {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-section {
+            margin-top: 50px;
+            color: #fff;
+            text-align: left;
+        }
+
+        .dashboard-section h3 {
+            font-size: 1.7em;
+            margin-bottom: 15px;
+            color: #ffdfdf;
+        }
+
+        .dashboard-section p {
+            font-size: 1.2em;
+            color: #e3f1fc;
+        }
+
+        .investment-list {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .investment-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 20px;
+            width: 250px;
+            margin: 15px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            perspective: 1000px;
+        }
+
+        .investment-item:hover {
+            transform: rotateY(10deg) scale(1.05);
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .investment-item p {
+            font-size: 1em;
+            line-height: 1.4;
+            color: #e0f7fa;
+        }
+
+        /* Chart Section */
+        .chart-section {
+            margin-top: 50px;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 50px;
+            border-radius: 30px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 40px;
+        }
+
+        .chart-container {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Next Button */
+        .next-btn {
+            margin-top: 40px;
+            padding: 15px 30px;
+            background: #768af0;
+            color: white;
+            font-size: 20px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-btn:hover {
+            transform: scale(1.1);
+            transition: 0.3s;
+        }
+
+        /* Back Button */
+        .back-btn {
+            margin-top: 40px;
+            padding: 15px 30px;
+            background: #f76b1c;
+            color: white;
+            font-size: 20px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-btn:hover {
+            transform: scale(1.1);
+            transition: 0.3s;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .chart-section {
+                grid-template-columns: 1fr;
+            }
+
+            .investment-item {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Home Page -->
+    <div id="home">
+        <h1 class="home-header">Brightfutures Finances</h1>
+        <p class="home-description">Manage your personal finances effectively with real-time data visualization and
+            investment strategies, tailored to your risk profile.</p>
+            <video autoplay muted loop class="video-background">
+                <source src="https://www.w3schools.com/howto/rain.mp4" type="video/mp4">
+            </video>
+        <button class="btn-glow" onclick="showLogin()">Login</button>
+        <div style="height: 40px;"></div>
+        <audio controls autoplay loop>
+            <source src="backgroundmusic.mp3" type="audio/mpeg">						
+            </audio>
+    </div>
+
+    <!-- Login Page -->
+    <div id="login">
+        <div class="login-box">
+            <h2>Login</h2>
+            <input type="text" id="name" class="login-input" placeholder="Your Name">
+            <input type="tel" id="phone" class="login-input" placeholder="Phone Number">
+            <input type="email" id="email" class="login-input" placeholder="Gmail ID">
+            <input type="number" id="age" class="login-input" placeholder="Your Age">
+            <button class="login-btn" onclick="loginUser()">Submit</button>
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboard">
+        <h1 class="dashboard-header" id="welcome-message"></h1>
+        <!-- Investment Types Section -->
+        <div class="dashboard-section">
+            <h3>Investment Types</h3>
+            <p>Explore different investment opportunities tailored to your risk profile:</p>
+            <ul class="investment-list">
+                <li class="investment-item">
+                    <h4>Real Estate Investment</h4>
+                    <p>Real estate investment involves purchasing, managing, and renting properties to generate a return.</p>
+                </li>
+                <li class="investment-item">
+                    <h4>Large Cap Investment</h4>
+                    <p>Large Cap companies are well-established with strong performance, suitable for low-risk portfolios.</p>
+                </li>
+                <li class="investment-item">
+                    <h4>Mid Cap Investment</h4>
+                    <p>Mid Cap companies offer growth potential with moderate risk, balancing stability and returns.</p>
+                </li>
+                <li class="investment-item">
+                    <h4>Small Cap Investment</h4>
+                    <p>Small Cap companies are emerging businesses, offering high risk but greater growth potential.</p>
+                </li>
+                <li class="investment-item">
+                    <h4>Precious Metals Investment</h4>
+                    <p>Invest in Gold, Silver, and other metals for a hedge against inflation and market instability.</p>
+                </li>
+                <li class="investment-item">
+                    <h4>Cryptocurrency Investment</h4>
+                    <p>Invest in digital currencies like Bitcoin and Ethereum for high-risk, high-reward opportunities.</p>
+                </li>
+                <li class="investment-item">
+                    <h4>Mutual Fund</h4>
+                    <p>Invest in Mutual Fund that allows investors to diversify across a board portfolio of stocks, bonds or other securities managed by professionals.</p>
+                </li>
+                <li class="investment-item">
+                    <h4>Startup</h4>
+                    <p>A high-risk, high-reward investment in an emerging business, often characterized by innovation and the potential for rapid growth.</p>
+                </li>
+                <li class="investment-item">
+                    <h4>Art & Artifact</h4>
+                    <p>A long-term investment in rare or unique pieces, with value driven by scarcity, artist reputation and marked trends, often appreciating over time.</p>
+                </li>
+                <li class="investment-item">
+                    <h4>Fixed Deposit</h4>
+                    <p>A financial instrument where you invest a lump sum amount for a fixed period.In return, you eartn a predetermined interest rate.This interest can be compounded periodically</p>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="chart-section">
+            <h3>Personal Finance Visualization</h3>
+            <div class="chart-container">
+                <canvas id="barChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="pieChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="lineChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="radarChart"></canvas>
+            </div>
+        </div>
+        <div class="investment-details" style="text-align: left;">
+            <div style="height: 9vh;"></div>
+            <p style="font-size: 35px; font-weight: bolder; font-family: cursive;">Structured plan for getting out of debt, building wealth and achieving financial stability : </p>
+            <div style="height: 5vh;"></div>
+            <ol>
+
+                <li><b style="color: #1d2b64; font-size: 20px;">Save INR 1 lac (100000) for a Starter Emergency Fund : </b>
+                    <div><i>This is a financial safety net for minor emergencies.</i></div>
+                </li>
+                <div style="height: 2vh;"></div>
+                <li><b style="color: #1d2b64; font-size: 20px;">Pay Off All Debt (Except the House) Using the Debt Snowball : </b>
+                    <div><i>List your debts from smallest to largest and pay them off in that order, while making minimum payments on all debts except the smallest.</i></div>
+                </li>
+                <div style="height: 2vh;"></div>
+                <li><b style="color: #1d2b64; font-size: 20px;">Save 3 to 6 Months of Expenses in a Fully Funded Emergency Fund : </b>
+                    <div><i>Build a more substantial emergency fund to cover big life events like job loss or major repairs.</i></div>
+                </li>
+                <div style="height: 2vh;"></div>
+                <li><b style="color: #1d2b64; font-size: 20px;">Invest 15% of Your Household Income in Retirement : </b>
+                    <div><i>Start investing for your future in retirement accounts like elss mutual funds or national pension scheme and growth mutual funds which are tax saving.</i></div>
+                </li>
+                <div style="height: 2vh;"></div>
+                <li><b style="color: #1d2b64; font-size: 20px;">Save for Your Children's College Fund : </b>
+                    <div><i>Set aside funds for your children's education in tax-advantaged accounts like an ESA or 529 plan.</i></div>
+                </li>
+                <div style="height: 2vh;"></div>
+                <li><b style="color: #1d2b64; font-size: 20px;">Pay Off Your Home Early : </b>
+                    <div><i>Focus on paying off your mortgage early, which will give you more financial freedom.</i></div>
+                </li>
+                <div style="height: 2vh;"></div>
+                <li><b style="color: #1d2b64; font-size: 20px;">Build Wealth and Give : </b>
+                    <div><i>After completing the steps, continue to grow wealth through investments and live generously.</i></div>
+                </li>
+            </ol>
+            <div style="height: 10vh;"></div>
+            <p style="font-size: small; text-align: center;">Investment and Future planning is subject to market risk so please read the documents carefully before investing</p>
+        </div>
+        <!-- Back Button -->
+        <div style="height: 5vh;"></div>
+        <button class="next-btn" onclick="next()">Next</button>
+        <!-- <div style="height: 0.2vh;"></div>
+        <button class="back-btn" onclick="backToHome()">Back to Home</button> -->
+    </div>
+    <!-- JavaScript -->
+    <script>
+        function showLogin() {
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('login').style.display = 'flex';
+        }
+
+        function loginUser() {
+            var name = document.getElementById('name').value;
+            var phone = document.getElementById('phone').value;
+            var email = document.getElementById('email').value;
+            var age = document.getElementById('age').value;
+
+            if (name && phone && email && age) {
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                document.getElementById('welcome-message').textContent = `Welcome ${name}! Here is your finance dashboard.`;
+
+                // Render the charts based on age (risk appetite)
+                renderCharts(age);
+            } else {
+                alert("Please fill out all fields.");
+            }
+        }
+
+        // function backToHome() {
+        //     document.getElementById('dashboard').style.display = 'none';
+        //     document.getElementById('home').style.display = 'flex';
+        // }
+        function next(){
+            window.location.href = 'index2.html';
+        }
+
+        function renderCharts(age) {
+            // Based on age, show varying risk appetite visualizations
+            if(age<0)
+             alert("invalid age !")
+            else if(age<15)
+             alert("Sorry this is not the right time for ypu to invest !")
+            else if(age>100)
+                alert("You are beyond the age limit please don't invest !")
+
+            let riskData =[10, 5, 15, 2, 18, 16, 4, 9, 11, 10];
+
+            if(age >= 15 && age<=30)
+              riskData =[7, 25,10, 15, 3, 4, 20, 6, 1, 9];
+            else if(age >30 && age<=40)
+              riskData =[8, 11, 9, 10, 10, 5, 20, 7, 3, 2];
+            else if(age >40 && age<=50)
+              riskData =[30, 25, 7, 5, 6, 2, 15, 1, 2, 7];
+            else if(age >50 && age<=60)
+              riskData =[40, 17, 2, 3, 6, 4, 13, 1, 9, 5];
+            else if(age >60 && age<=70)
+              riskData =[2, 6, 4, 8, 8, 6, 17, 9, 15, 25];
+            else
+            riskData =[2, 6, 4, 8, 8, 6, 17, 9, 15, 25];
+            // Bar Chart
+            var ctxBar = document.getElementById('barChart').getContext('2d');
+            new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: ['Real Estate', 'Large Cap', 'Mid Cap', 'Small Cap', 'Precious Metals', 'Cryptocurrency', 'Mutual Fund', 'Startup', 'Art & Artifact', 'Fixed Deposit'],
+                    datasets: [{
+                        label: 'Investment Distribution (%)',
+                        data: riskData,
+                        backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)', 'rgba(53, 60, 95, 0.2)', 'rgba(181, 21, 14, 0.2)', 'rgba(221, 109, 30, 0.2)', 'rgba(200, 7, 136, 0.2)'],
+                        borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)', 'rgba(53, 60, 95, 1)', 'rgba(181, 21, 14, 1)', 'rgba(221, 109, 30, 1)', 'rgba(200, 7, 136, 1)'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Pie Chart
+            var ctxPie = document.getElementById('pieChart').getContext('2d');
+            new Chart(ctxPie, {
+                type: 'pie',
+                data: {
+                    labels: ['Real Estate', 'Large Cap', 'Mid Cap', 'Small Cap', 'Precious Metals', 'Cryptocurrency', 'Mutual Fund', 'Startup', 'Art & Artifact', 'Fixed Deposit'],
+                    datasets: [{
+                        data: riskData,
+                        backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(53, 60, 95, 0.6)', 'rgba(181, 21, 14, 0.6)', 'rgba(221, 109, 30, 0.6)', 'rgba(200, 7, 136, 0.6)']
+                    }]
+                }
+            });
+
+            // Line Chart
+            var ctxLine = document.getElementById('lineChart').getContext('2d');
+            new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: ['Real Estate', 'Large Cap', 'Mid Cap', 'Small Cap', 'Precious Metals', 'Cryptocurrency', 'Mutual Fund', 'Startup', 'Art & Artifact', 'Fixed Deposit'],
+                    datasets: [{
+                        label: 'Investment Growth (%)',
+                        data: riskData,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        fill: false,
+                    }]
+                }
+            });
+
+            // Radar Chart
+            var ctxRadar = document.getElementById('radarChart').getContext('2d');
+            new Chart(ctxRadar, {
+                type: 'radar',
+                data: {
+                    labels: ['Real Estate', 'Large Cap', 'Mid Cap', 'Small Cap', 'Precious Metals', 'Cryptocurrency', 'Mutual Fund', 'Startup', 'Art & Artifact', 'Fixed Deposit'],
+                    datasets: [{
+                        label: 'Risk Appetite (%)',
+                        data: riskData,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                    }]
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
